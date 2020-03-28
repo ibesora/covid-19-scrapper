@@ -15,13 +15,13 @@ module.exports = {
 
 		geographies.themes[0].indicators[0].values.forEach((value, index) => {
 
-			areesBasiques[index].value = value;
+			areesBasiques[index].value = value === "NaN" ? -1 : value;
 
 		});
 
 		geographies.themes[0].indicators[0].associates[1].values.forEach((value, index) => {
 
-			areesBasiques[index].cases = value;
+			areesBasiques[index].cases = value === "NaN" ? -1 : value;
 
 		});
 		return areesBasiques;

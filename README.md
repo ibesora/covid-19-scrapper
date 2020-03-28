@@ -16,7 +16,7 @@ Daily files are available in [this](https://github.com/ibesora/covid-19-data) re
 ## Available data
 | File name | description |
 -----|----
-areesBasiques | This file contains a list of all "Arees bàsiques de salut". Each element has the following attributes <ul><li><b>id</b>: Identifier</li><li><b>name</b>: Name</li><li><b>value</b>: Rates standarized by sex and age</li><li><b>cases</b>: Number of cases</li></ul>
+areesBasiques | This file contains a list of all "Arees bàsiques de salut". Each element has the following attributes <ul><li><b>id</b>: Identifier</li><li><b>name</b>: Name</li><li><b>value</b>: Rates standarized by sex and age</li><li><b>cases</b>: Number of cases</li></ul> <b>Note:</b> <b>value</b> and <b>cases</b> are sometimes invalid in the source data. When that happens a value of -1 is set.
 PCRByAgeRange | This file contains the number of cases by age range. Each element has the following attributes <ul><li><b>min</b>: Minimum age of the range</li><li><b>max</b>: Maximum age of the range</li><li><b>positive</b>: Number of positives</li><li><b>negative</b>: Number of negatives</li></ul>
 PCRBySex | This file contains the number of cases per sex. Each element has the following attributes <ul><li><b>femalePositive</b>: Number of female positives</li><li><b>malePositive</b>: Number of male positives</li><li><b>femaleNegative</b>: Number of female negatives</li><li><b>maleNegative</b>: Number of male negatives</li></ul>
 PCRTotals | This file contains the total number of cases. Each element has the following attributes <ul><li><b>negative</b>: Number of negatives</li><li><b>positive</b>: Number of positives</li></ul>
