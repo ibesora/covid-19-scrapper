@@ -9,8 +9,9 @@ const DataConverter = require("./dataConverter");
 
 		const ABSResponse = await Scrapper.fetchAreesBàsiques();
 		const ABS = DataConverter.convertAreesBasiquesFromResponse(ABSResponse);
-		console.log(ABS);
-		// const PCRTotals = await Scrapper.fetchPCRTotals();
+		const PCRTotalsResponse = await Scrapper.fetchPCRTotals();
+		const PCRTotals = DataConverter.convertPCRTotalsFromResponse(PCRTotalsResponse);
+		console.log(PCRTotals);
 		// const PCRBySex = await Scrapper.fetchPCRBySex();
 		// const FrotisResults = await Scrapper.fetchFrotisResults();
 		// const PCRVarPerDate = await Scrapper.fetchPCRVarPerDate();

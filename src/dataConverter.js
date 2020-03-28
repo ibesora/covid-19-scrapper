@@ -25,6 +25,20 @@ module.exports = {
 		});
 		return areesBasiques;
 
+	},
+
+	convertPCRTotalsFromResponse: (data) => {
+
+		const negative = data.results[0].result.data.dsr.DS[0].PH[0]["DM0"][0].C[1];
+		const positive = data.results[0].result.data.dsr.DS[0].PH[0]["DM0"][1].C[1];
+
+		return {
+			negative,
+			positive,
+			total: negative + positive
+
+		};
+
 	}
 
 }
