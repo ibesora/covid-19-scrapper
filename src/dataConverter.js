@@ -34,8 +34,22 @@ module.exports = {
 
 		return {
 			negative,
-			positive,
-			total: negative + positive
+			positive
+		};
+
+	},
+	convertPCRBySexFromResponse: (data) => {
+
+		const femalePositive = data.results[0].result.data.dsr.DS[0].PH[0]["DM0"][0].X[0]["M0"];
+		const malePositive = data.results[0].result.data.dsr.DS[0].PH[0]["DM0"][0].X[1]["M0"];
+		const femaleNegative = data.results[0].result.data.dsr.DS[0].PH[0]["DM0"][1].X[0]["M0"];
+		const maleNegative = data.results[0].result.data.dsr.DS[0].PH[0]["DM0"][1].X[1]["M0"];
+
+		return {
+			femalePositive,
+			malePositive,
+			femaleNegative,
+			maleNegative
 
 		};
 
