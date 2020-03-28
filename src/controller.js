@@ -14,11 +14,11 @@ const exportObjectToCSV = (input) => {
 
 	}
 	const keys = Object.keys(obj[0]);
-	const rows = [ keys.join(";") ];
+	const rows = [ keys.map(k => `"${k}"`).join(",") ];
 	obj.forEach(e => {
 
 		const rowValues = keys.map(key => e[key]);
-		rows.push(rowValues.join(";"));
+		rows.push(rowValues.join(","));
 
 	});
 	return rows.join("\n");
