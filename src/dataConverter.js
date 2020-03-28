@@ -66,6 +66,18 @@ module.exports = {
 
 		});
 
+	},
+	convertPCRVarPerDateFromResponse: (data) => {
+
+		return data.results[0].result.data.dsr.DS[0].PH[0]["DM0"].map((e) => {
+
+			return {
+				timestamp: e.C[0],
+				variation: e.C[1]
+			};
+
+		});
+
 	}
 
 }
