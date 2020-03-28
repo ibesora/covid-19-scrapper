@@ -25,6 +25,7 @@
     "body-parser": "^1.15.2",
     "cors": "^2.8.0",
     "gulp-flow-remove-types": "^1.0.0",
+    "moment": "^2.24.0",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.0",
     "tap": "^14.10.7"

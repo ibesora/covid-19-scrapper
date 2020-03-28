@@ -1,5 +1,6 @@
 // @flow
 "use strict";
+const moment = require("moment");
 
 module.exports = {
 
@@ -60,6 +61,7 @@ module.exports = {
 
 			return {
 				timestamp: e["G0"],
+				date: moment.unix(e["G0"] / 1000).format("YYYY-MM-DD"),
 				negative: e.X[0]["M0"],
 				positive: e.X[1]["M0"]
 			};
@@ -73,6 +75,7 @@ module.exports = {
 
 			return {
 				timestamp: e.C[0],
+				date: moment.unix(e.C[0] / 1000).format("YYYY-MM-DD"),
 				variation: e.C[1]
 			};
 
@@ -85,8 +88,8 @@ module.exports = {
 
 			const range = e.C[0].split("-");
 			return {
-				range: Number(range[0]),
-				maxRange: Number(range[1]),
+				min: Number(range[0]),
+				max: Number(range[1]),
 				positive: e.C[1],
 				negative: e.C[2]
 			};
