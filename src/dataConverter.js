@@ -53,6 +53,19 @@ module.exports = {
 
 		};
 
+	},
+	convertFrotisFromResponse: (data) => {
+
+		return data.results[0].result.data.dsr.DS[0].PH[0]["DM0"].map((e) => {
+
+			return {
+				timestamp: e["G0"],
+				negative: e.X[0]["M0"],
+				positive: e.X[1]["M0"]
+			};
+
+		});
+
 	}
 
 }

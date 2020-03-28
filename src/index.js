@@ -13,8 +13,9 @@ const DataConverter = require("./dataConverter");
 		const PCRTotals = DataConverter.convertPCRTotalsFromResponse(PCRTotalsResponse);
 		const PCRBySexResponse = await Scrapper.fetchPCRBySex();
 		const PCRBySex = DataConverter.convertPCRBySexFromResponse(PCRBySexResponse);
-		console.log(PCRBySex);
-		// const FrotisResults = await Scrapper.fetchFrotisResults();
+		const FrotisResultsResponse = await Scrapper.fetchFrotisResults();
+		const FrotisResults = DataConverter.convertFrotisFromResponse(FrotisResultsResponse);
+		console.log(FrotisResults);
 		// const PCRVarPerDate = await Scrapper.fetchPCRVarPerDate();
 		// const PCRByAgeRange = await Scrapper.fetchPCRByAgeRange();
 
