@@ -8,7 +8,7 @@ module.exports = {
 		const geographies = data.geographies[0];
 		const areesBasiques = geographies.features.map((el) => {
 
-			return {	name: el.name	};
+			return {id: el.id,	name: el.name	};
 
 		});
 
@@ -74,6 +74,21 @@ module.exports = {
 			return {
 				timestamp: e.C[0],
 				variation: e.C[1]
+			};
+
+		});
+
+	},
+	convertPCRByAgeFromResponse: (data) => {
+
+		return data.results[0].result.data.dsr.DS[0].PH[0]["DM0"].map((e) => {
+
+			const range = e.C[0].split("-");
+			return {
+				range: Number(range[0]),
+				maxRange: Number(range[1]),
+				positive: e.C[1],
+				negative: e.C[2]
 			};
 
 		});
