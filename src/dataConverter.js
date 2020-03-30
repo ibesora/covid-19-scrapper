@@ -169,7 +169,20 @@ module.exports = {
 
 		});
 
-		return dataByComarcaAndCity;
+		const result = [];
+		const comarques = Object.keys(dataByComarcaAndCity);
+		comarques.forEach((comarca) => {
+
+			const municipis = Object.keys(dataByComarcaAndCity[comarca]);
+			municipis.forEach(m => {
+
+				result.push(dataByComarcaAndCity[comarca][m]);
+
+			});
+
+		});
+
+		return result;
 
 	}
 

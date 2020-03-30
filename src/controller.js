@@ -5,6 +5,7 @@ const moment = require("moment");
 const Scrapper = require("./scrapper");
 const DataConverter = require("./dataConverter");
 const areesBasiquesGeom = require("./areesBasiquesGeom.json");
+const municipisGeom = require("./municipisGeom.json");
 
 const exportObjectToCSV = (input) => {
 
@@ -26,7 +27,7 @@ const exportObjectToCSV = (input) => {
 
 };
 
-const exportObjectToGeoJSON = (input) => {
+const exportAreesBasiquesToGeoJSON = (input) => {
 
 	const inputById = input.reduce((agg, el) => {
 
@@ -70,6 +71,130 @@ const exportObjectToGeoJSON = (input) => {
 
 };
 
+const transformCityName = (name) => {
+
+	if (name === "Saus Camallera i Llampaies") {
+
+		return "Saus, Camallera i Llampaies";
+
+	} else if (name === "Vinyols i  els Arcs") {
+
+		return "Vinyols i els Arcs";
+
+	} else if (name === "Calonge i Sant Antoni") {
+
+		return "Calonge";
+
+	} else if (name === "Cruïlles Monells i Sant Sadurní de l'Heura") {
+
+		return "Cruïlles, Monells i Sant Sadurní de l'Heura";
+
+	} else if (name === "Catellví de Rosanes") {
+
+		return "Castellví de Rosanes";
+
+	} else if (name === "Sant Adrià del Besòs") {
+
+		return "Sant Adrià de Besòs";
+
+	} else if (name === "Mortellà i Martinet") {
+
+		return "Montellà i Martinet";
+
+	} else if (name === "Torres del Segre") {
+
+		return "Torres de Segre";
+
+	} else if (name === "Fogars de Tordera") {
+
+		return "Fogars de la Selva";
+
+	} else if (name === "Roda de Berà") {
+
+		return "Roda de Barà";
+
+	} else if (name === "Vespella") {
+
+		return "Vespella de Gaià";
+
+	} else if (name === "Santa Perpétua de Mogoda") {
+
+		return "Santa Perpètua de Mogoda";
+
+	}
+
+	return name;
+
+};
+
+const exportPCRByCityToGeoJSON = (input) => {
+
+	const geomByName = municipisGeom.features.reduce((agg, el) => {
+
+		agg[el.properties.nom_muni.toLowerCase()] = el; return agg;
+
+	}, {});
+
+	const geojson = {
+		type: "FeatureCollection",
+		name: "municipis",
+		crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::25831" } },
+		features: []
+	};
+
+	const municipisInPlace = {};
+	input.forEach(city => {
+
+		const name = transformCityName(city.name).toLowerCase();
+
+		const geom = geomByName[name];
+
+		if (!geom) {
+
+			console.log("!!!!!!!!!!!!!!!!!!!!!", name, "not found");
+
+		} else {
+
+			municipisInPlace[geom.properties.municipi] = true;
+			geojson.features.push({
+				type: "Feature",
+			  properties: {
+					...city
+				},
+				geometry: geom.geometry
+			});
+
+		}
+
+	});
+
+	console.log(municipisInPlace);
+	// Add missing geometries
+	municipisGeom.features.forEach((el) => {
+
+		if (!municipisInPlace[el.properties.municipi]) {
+
+			console.log(el.properties.municipi, "not found, adding with 0s");
+
+			geojson.features.push({
+				type: "Feature",
+			  properties: {
+					name: el.properties.nom_muni,
+					positive: 0,
+					negative: 0
+				},
+				geometry: el.geometry
+			});
+
+		}
+
+	});
+
+
+	return geojson;
+
+};
+
 module.exports = {
 	fetchAndSaveAreesBasiques: async () => {
 
@@ -77,7 +202,7 @@ module.exports = {
 		const ABS = DataConverter.convertAreesBasiquesFromResponse(ABSResponse);
 		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-areesBasiques.json`, JSON.stringify(ABS));
 		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-areesBasiques.csv`, exportObjectToCSV(ABS));
-		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-areesBasiques.geojson`, JSON.stringify(exportObjectToGeoJSON(ABS)));
+		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-areesBasiques.geojson`, JSON.stringify(exportAreesBasiquesToGeoJSON(ABS)));
 
 	},
 	fetchAndSavePCRTotals: async () => {
@@ -126,6 +251,7 @@ module.exports = {
 		const PCRByCity = DataConverter.convertPCRByCityFromResponse(PCRByCityResponse);
 		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-PCRByCity.json`, JSON.stringify(PCRByCity));
 		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-PCRByCity.csv`, exportObjectToCSV(PCRByCity));
+		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-PCRByCity.geojson`, JSON.stringify(exportPCRByCityToGeoJSON(PCRByCity)));
 
 	}
 }
