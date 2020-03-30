@@ -2,15 +2,14 @@
 "use strict";
 
 const fetch = require("node-fetch");
-const areesBasiques = require("./areesBasiques.json");
 
 module.exports = {
 
 	fetchAreesBasiques: async () => {
 
-		// const res = await fetch("http://aquas.gencat.cat/web/.content/IntegradorServeis/mapa_covid/data.js", {"credentials":"include", "headers":{"accept":"application/json, text/javascript, */*; q=0.01", "accept-language":"ca,en;q=0.9,es;q=0.8", "cache-control":"no-cache", "pragma":"no-cache", "x-requested-with":"XMLHttpRequest"}, "referrer":"http://aquas.gencat.cat/.content/IntegradorServeis/mapa_covid/atlas.html", "referrerPolicy":"no-referrer-when-downgrade", "body":null, "method":"GET", "mode":"cors"});
-		const res = areesBasiques;
-		return await res;
+		const res = await fetch("http://aquas.gencat.cat/web/.content/IntegradorServeis/mapa_covid/data.js", {"credentials":"include", "headers":{"accept":"application/json, text/javascript, */*; q=0.01", "accept-language":"ca,en;q=0.9,es;q=0.8", "cache-control":"no-cache", "pragma":"no-cache", "x-requested-with":"XMLHttpRequest"}, "referrer":"http://aquas.gencat.cat/.content/IntegradorServeis/mapa_covid/atlas.html", "referrerPolicy":"no-referrer-when-downgrade", "body":null, "method":"GET", "mode":"cors"});
+		const goodChars = (await res.text()).substring(1);
+		return await JSON.parse(goodChars);
 
 	},
 
