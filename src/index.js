@@ -12,11 +12,13 @@ const Controller = require("./controller");
 		await Controller.fetchAndSaveFrotis();
 		await Controller.fetchAndSavePCRVariation();
 		await Controller.fetchAndSavePCRByAgeRange();
+		await Controller.fetchPCRByCity();
 
 	} catch (e) {
 
 		// Deal with the fact the chain failed
 		console.log(e.message);
+		console.log(e.stack);
 
 	}
 

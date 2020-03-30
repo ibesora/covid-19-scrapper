@@ -119,6 +119,14 @@ module.exports = {
 		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-PCRByAgeRange.json`, JSON.stringify(PCRByAgeRange));
 		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-PCRByAgeRange.csv`, exportObjectToCSV(PCRByAgeRange));
 
+	},
+	fetchPCRByCity: async () => {
+
+		const PCRByCityResponse = await Scrapper.fetchPCRByCity();
+		const PCRByCity = DataConverter.convertPCRByCityFromResponse(PCRByCityResponse);
+		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-PCRByCity.json`, JSON.stringify(PCRByCity));
+		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-PCRByCity.csv`, exportObjectToCSV(PCRByCity));
+
 	}
 }
 ;
