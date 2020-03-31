@@ -168,13 +168,13 @@ const exportPCRByCityToGeoJSON = (input) => {
 
 	});
 
-	console.log(municipisInPlace);
 	// Add missing geometries
+	let missing = 0;
 	municipisGeom.features.forEach((el) => {
 
 		if (!municipisInPlace[el.properties.municipi]) {
 
-			console.log(el.properties.municipi, "not found, adding with 0s");
+			missing++;
 
 			geojson.features.push({
 				type: "Feature",
@@ -189,6 +189,8 @@ const exportPCRByCityToGeoJSON = (input) => {
 		}
 
 	});
+
+	console.log(`${missing} cities not found in the data, added with 0 values`);
 
 
 	return geojson;
