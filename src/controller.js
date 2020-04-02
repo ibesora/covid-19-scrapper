@@ -255,6 +255,179 @@ module.exports = {
 		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-PCRByCity.csv`, exportObjectToCSV(PCRByCity));
 		fs.writeFileSync(`./data/${moment().format("YYYY-MM-DD")}-PCRByCity.geojson`, JSON.stringify(exportPCRByCityToGeoJSON(PCRByCity)));
 
+	},
+	processGencatData: () => {
+
+		const data = fs.readFileSync("./covidSexeMunicipi.csv", "utf8").split("\n");
+
+		let maxDate = moment("2020-01-01");
+		data.forEach((d, index) => {
+
+			if (index !== 0) {
+
+				const rowData = d.split(",");
+				const rowDate = rowData[0].split("/");
+				const date = moment(`${rowDate[2]}-${rowDate[1]}-${rowDate[0]}`);
+				maxDate = date > maxDate ? date : maxDate;
+
+			}
+
+		});
+
+		const dataJSON = {};
+		data.forEach((el, index) => {
+
+			const values = {};
+			const minDate = moment("2020-03-01");
+			while (minDate <= maxDate) {
+
+				values[minDate.format("YYYY-MM-DD")] = { male: 0, female: 0, total: 0, accum: 0 };
+				minDate.add(1, "day");
+
+			}
+
+			if (index !== 0) {
+
+				const rowData = el.split(",");
+				const name = rowData[4];
+				if (!dataJSON[name]) {
+
+					dataJSON[name] = {
+						ComarcaCodi: rowData[1],
+						ComarcaDescripcio: rowData[2],
+						MunicipiCodi: rowData[3],
+						values };
+
+				}
+				const rowDate = rowData[0].split("/");
+				const resultCode = rowData[7];
+				const sexCode = rowData[5];
+				const num = Number(rowData[9]);
+				const date = `${rowDate[2]}-${rowDate[1]}-${rowDate[0]}`;
+				if (resultCode === "1") {
+
+					const currentValues = dataJSON[name].values[date];
+					const malePositives = currentValues.male + (sexCode === "0" ? num : 0);
+					const femalePositives = currentValues.female + (sexCode === "1" ? num : 0);
+					dataJSON[name].values[date] = { male: malePositives, female: femalePositives, total: femalePositives + malePositives };
+
+				}
+
+			}
+
+		});
+
+		Object.keys(dataJSON).forEach(k => {
+
+			const dates = Object.keys(dataJSON[k].values);
+			dates.sort();
+			let accum = 0;
+			dates.forEach(date => {
+
+				accum += dataJSON[k].values[date].total;
+				dataJSON[k].values[date].accum = accum;
+
+			});
+
+		});
+
+		const geomByName = municipisGeom.features.reduce((agg, el) => {
+
+			agg[el.properties.nom_muni.toLowerCase()] = el; return agg;
+
+		}, {});
+
+		const geojson = {
+			type: "FeatureCollection",
+			name: "municipis",
+			crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::25831" } },
+			features: []
+		};
+
+		const municipisInPlace = {};
+		Object.keys(dataJSON).forEach(key => {
+
+			const current = dataJSON[key];
+			const name = transformCityName(key).toLowerCase();
+			const geom = geomByName[name];
+
+			if (!geom) {
+
+				console.log(key, "not found!!!");
+
+			} else {
+
+				municipisInPlace[geom.properties.municipi] = true;
+				geojson.features.push({
+					type: "Feature",
+					properties: {
+						name: key,
+						...current
+					},
+					geometry: geom.geometry
+				});
+
+			}
+
+		});
+
+		let missing = 0;
+		municipisGeom.features.forEach((el) => {
+
+			if (!municipisInPlace[el.properties.municipi]) {
+
+				missing++;
+
+				geojson.features.push({
+					type: "Feature",
+			  properties: {
+						name: el.properties.nom_muni,
+						positive: 0,
+						negative: 0
+					},
+					geometry: el.geometry
+				});
+
+			}
+
+		});
+
+		console.log(`${missing} cities not found in the data, added with 0 values`);
+
+
+		const date = moment("2020-03-01");
+		while (date <= maxDate) {
+
+			const geojsonPerDate = {
+				type: "FeatureCollection",
+				name: "municipis",
+				crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::25831" } },
+				features: []
+			};
+			geojson.features.forEach(f => {
+
+				if (f.properties.values) {
+
+					if (!f.properties.values[date.format("YYYY-MM-DD")]) {
+
+						console.log(date.format("YYYY-MM-DD"), "data not found");
+
+					} else if (f.properties.values[date.format("YYYY-MM-DD")].accum !== 0) {
+
+					  geojsonPerDate.features.push(f);
+						geojsonPerDate.features[geojsonPerDate.features.length - 1].properties.values = f.properties.values[date.format("YYYY-MM-DD")];
+
+					}
+
+				}
+
+			});
+
+			fs.writeFileSync(`./data/casosPerMunicipi-${date.format("YYYY-MM-DD")}.geojson`, JSON.stringify(geojsonPerDate));
+			date.add(1, "day");
+
+		}
+
 	}
 }
 ;
