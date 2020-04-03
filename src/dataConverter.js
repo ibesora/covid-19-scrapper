@@ -86,11 +86,10 @@ module.exports = {
 
 		return data.results[0].result.data.dsr.DS[0].PH[0]["DM0"].map((e) => {
 
-			const range = e.C[0].split("-");
+			const range = /\+$/i.test(e.C[0]) ? [e.C[0].split(" ")[0]] : e.C[0].split("-");
 			return {
 				min: Number(range[0]),
-				max: Number(range[1]),
-				positive: e.C[1],
+				max: range.length > 1 ? Number(range[1]) : "",
 				negative: e.C[2]
 			};
 
