@@ -154,6 +154,11 @@ module.exports = {
 
 							cityDataToStore = { name, negative: previousCityData.negative, positive: cityData[1] };
 
+						} else if (cityData.length === 2 && !city.R) {
+
+							console.log("Bad data(?) in ", name);
+							cityDataToStore = { name, negative: cityData[1], positive: cityData[1] };
+
 						}
 						dataByCity[name] = cityDataToStore;
 						previousCityData = cityDataToStore;
