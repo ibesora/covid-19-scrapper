@@ -57,7 +57,7 @@ module.exports = {
 	},
 	convertFrotisFromResponse: (data) => {
 
-		return data.results[0].result.data.dsr.DS[0].PH[0]["DM0"].map((e) => {
+		return data.results[0].result.data.dsr.DS[0].PH[0]["DM0"].filter(e => e.X.length === 2).map((e) => {
 
 			return {
 				timestamp: e["G0"],
