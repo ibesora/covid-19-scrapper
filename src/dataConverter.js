@@ -156,12 +156,17 @@ module.exports = {
 
 						} else if (cityData.length === 2 && !city.R) {
 
-							console.log("Bad data(?) in ", name);
+							console.log("Bad data(?) in ", name, JSON.stringify(city));
 							cityDataToStore = { name, negative: cityData[1], positive: cityData[1] };
 
 						}
-						dataByCity[name] = cityDataToStore;
-						previousCityData = cityDataToStore;
+
+						if (name) {
+
+						  dataByCity[name] = cityDataToStore;
+							previousCityData = cityDataToStore;
+
+						}
 
 					});
 
